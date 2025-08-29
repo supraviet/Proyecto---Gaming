@@ -255,6 +255,47 @@
         }
 
         }
+                /* Estilos adicionales para la funcionalidad de mostrar contraseña */
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--secondary);
+            transition: var(--transition);
+        }
+
+        .toggle-password:hover {
+            color: var(--primary);
+        }
+
+        /* Mejoras de responsividad */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 25px;
+            }
+            
+            .logo-text {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Animaciones adicionales */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
@@ -280,6 +321,7 @@
                     <div class="input-with-icon">
                         <i class="fas fa-lock"></i>
                         <input type="password" id="password" placeholder="••••••••" required>
+                        <i class="fas fa-eye toggle-password"></i>
                     </div>
                 </div>
                 
@@ -329,7 +371,7 @@
         });
         
         document.querySelector('.register-btn').addEventListener('click', function(e) {
-            e.preventDefault();
+            e.prevÑentDefault();
             // Redirigir a página de registro
             alert('Redirigiendo a página de registro...');
         });
