@@ -1,6 +1,6 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using Proyecto___Gaming.Models;
+using Proyecto_Gaming.Models;
 
 namespace Proyecto___Gaming.Controllers
 {

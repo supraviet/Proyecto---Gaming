@@ -1,0 +1,130 @@
+@model IEnumerable<Proyecto_Gaming.Models.Juego>
+
+@{
+    ViewData["Title"] = "Catálogo de Juegos";
+}
+
+<div class="header text-center py-4">
+    <h1 class="display-4"><i class="fas fa-gamepad me-2"></i>Explora nuestro catálogo de juegos</h1>
+    <p class="lead">Descubre los mejores títulos para todas las plataformas</p>
+</div>
+
+<!-- Filtros -->
+<div class="filter-section bg-dark rounded p-4 mb-4">
+    <form asp-action="Index" method="get" class="row g-3">
+        <div class="col-md-4">
+            <label class="form-label text-white">Filtrar por categoría:</label>
+            <select name="categoria" class="form-select" onchange="this.form.submit()">
+                <option value="">Todas las categorías</option>
+                @foreach (var categoria in ViewBag.Categorias)
+                {
+                    <option value="@categoria" selected="@(ViewBag.CategoriaSeleccionada == categoria)">@categoria</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label text-white">Filtrar por plataforma:</label>
+            <select name="plataforma" class="form-select" onchange="this.form.submit()">
+                <option value="">Todas las plataformas</option>
+                @foreach (var plataforma in ViewBag.Plataformas)
+                {
+                    <option value="@plataforma" selected="@(ViewBag.PlataformaSeleccionada == plataforma)">@plataforma</option>
+                }
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label text-white">Buscar por nombre:</label>
+            <div class="input-group">
+                <input type="text" name="busqueda" class="form-control" placeholder="Nombre del juego" value="@ViewBag.Busqueda">
+                <button type="submit" class="btn btn-primary"><i class="fas fa-search"></i></button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- Juegos -->
+@if (Model.Any())
+{
+    <div class="row">
+        @foreach (var item in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="game-card card h-100 shadow">
+                    <img src="@item.Imagen" class="card-img-top" alt="@item.Nombre" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">@item.Nombre</h5>
+                        <p class="card-text">
+                            <span class="badge bg-primary">@item.Categoria</span>
+                            <span class="badge bg-secondary">@item.Plataforma</span>
+                        </p>
+                        <div class="game-rating mb-2">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                if (i <= item.PuntuacionMedia)
+                                {
+                                    <i class="fas fa-star text-warning"></i>
+                                }
+                                else if (i - 0.5m <= item.PuntuacionMedia)
+                                {
+                                    <i class="fas fa-star-half-alt text-warning"></i>
+                                }
+                                else
+                                {
+                                    <i class="far fa-star text-warning"></i>
+                                }
+                            }
+                            <span class="ms-1">@item.PuntuacionMedia?.ToString("0.0")</span>
+                        </div>
+                        <a asp-action="Detalles" asp-route-id="@item.IdJuego" class="btn btn-primary w-100">Ver detalles</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <div class="alert alert-info text-center">
+        <h4>No se encontraron juegos</h4>
+        <p>Intenta con otros criterios de búsqueda</p>
+    </div>
+}
+
+@section Styles {
+    <style>
+        body {
+            background: linear-gradient(135deg, #6c5ce7, #8e44ad);
+            color: white;
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header {
+            padding: 2rem 0;
+        }
+        
+        .game-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: none;
+            border-radius: 15px;
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            color: white;
+        }
+        
+        .game-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .game-rating {
+            font-size: 1.1rem;
+        }
+        
+        .filter-section {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+    </style>
+}
