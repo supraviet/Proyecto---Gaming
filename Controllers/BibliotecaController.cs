@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore; // EF Core async/extensiones
+using Microsoft.EntityFrameworkCore;
 using Npgsql;
 using Proyecto_Gaming.Data;
 using Proyecto_Gaming.Models;
@@ -23,6 +23,16 @@ namespace Proyecto_Gaming.Controllers
         // GET: Biblioteca
         public async Task<IActionResult> Index(string categoria, string plataforma, string busqueda)
         {
+            // Verificar si el usuario está autenticado (comprobar si hay un UserId en la sesión)
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (userId == null)
+            {
+                // Si el usuario no está autenticado, redirigirlo al login
+                TempData["Error"] = "Debes iniciar sesión para acceder al catálogo.";
+                return RedirectToAction("Login", "Account");
+            }
+
             var juegos = new List<Juego>();
             var categorias = new List<string>();
             var plataformas = new List<string>();
@@ -96,6 +106,7 @@ namespace Proyecto_Gaming.Controllers
                 }
             }
 
+            // Pasar las categorías, plataformas y juegos a la vista
             ViewBag.Categorias = categorias;
             ViewBag.Plataformas = plataformas;
             ViewBag.CategoriaSeleccionada = categoria;
@@ -105,14 +116,15 @@ namespace Proyecto_Gaming.Controllers
             return View(juegos);
         }
 
-        // POST/GET: Biblioteca/AddToLibrary/5
         public async Task<IActionResult> AddToLibrary(int id)
         {
-            // Verificar sesión/identidad
-            if (User?.Identity?.IsAuthenticated != true || string.IsNullOrWhiteSpace(User.Identity.Name))
+            // Verificar si el usuario está autenticado (comprobar si hay un UserId en la sesión)
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (userId == null)
             {
                 TempData["Error"] = "Debes iniciar sesión para añadir juegos a tu biblioteca.";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Login", "Account");
             }
 
             // Cargar entidades necesarias
@@ -124,7 +136,7 @@ namespace Proyecto_Gaming.Controllers
             }
 
             var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.NombreUsuario == User.Identity.Name);
+                .FirstOrDefaultAsync(u => u.id_usuario.ToString() == userId);
 
             if (usuario == null)
             {
@@ -134,13 +146,13 @@ namespace Proyecto_Gaming.Controllers
 
             // Evitar duplicados en la biblioteca
             var existente = await _context.BibliotecaUsuario
-                .FirstOrDefaultAsync(b => b.IdUsuario == usuario.IdUsuario && b.IdJuego == juego.IdJuego);
+                .FirstOrDefaultAsync(b => b.IdUsuario == usuario.id_usuario && b.IdJuego == juego.IdJuego);
 
             if (existente == null)
             {
                 _context.BibliotecaUsuario.Add(new BibliotecaUsuario
                 {
-                    IdUsuario = usuario.IdUsuario,
+                    IdUsuario = usuario.id_usuario,
                     IdJuego = juego.IdJuego,
                     Estado = "Pendiente"
                 });
@@ -150,7 +162,6 @@ namespace Proyecto_Gaming.Controllers
             }
             else
             {
-                // Si ya existía, opcionalmente lo forzamos a "Pendiente" otra vez
                 if (!string.Equals(existente.Estado, "Pendiente"))
                 {
                     existente.Estado = "Pendiente";
@@ -170,6 +181,15 @@ namespace Proyecto_Gaming.Controllers
         // GET: Biblioteca/Pendientes
         public async Task<IActionResult> Pendientes()
         {
+            // Verificar si el usuario está autenticado
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (userId == null)
+            {
+                TempData["Error"] = "Debes iniciar sesión para ver tus juegos pendientes.";
+                return RedirectToAction("Login", "Account");
+            }
+
             // Obtener juegos pendientes del usuario
             var juegosPendientes = new List<Juego>();
 
@@ -201,14 +221,16 @@ namespace Proyecto_Gaming.Controllers
         // POST/GET: Biblioteca/MarkAsPlaying/5
         public async Task<IActionResult> MarkAsPlaying(int id)
         {
-            if (User?.Identity?.IsAuthenticated != true || string.IsNullOrWhiteSpace(User.Identity.Name))
+            var userId = HttpContext.Session.GetString("UserId");
+
+            if (userId == null)
             {
                 TempData["Error"] = "Debes iniciar sesión.";
                 return RedirectToAction(nameof(Pendientes));
             }
 
             var usuario = await _context.Usuarios
-                .FirstOrDefaultAsync(u => u.NombreUsuario == User.Identity.Name);
+                .FirstOrDefaultAsync(u => u.id_usuario.ToString() == userId);
 
             if (usuario == null)
             {
@@ -217,7 +239,7 @@ namespace Proyecto_Gaming.Controllers
             }
 
             var biblioteca = await _context.BibliotecaUsuario
-                .FirstOrDefaultAsync(b => b.IdUsuario == usuario.IdUsuario &&
+                .FirstOrDefaultAsync(b => b.IdUsuario == usuario.id_usuario &&
                                           b.IdJuego == id &&
                                           b.Estado == "Pendiente");
 
