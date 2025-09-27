@@ -4,10 +4,25 @@
     ViewData["Title"] = "Catálogo de Juegos";
 }
 
-<div class="header text-center py-4">
-    <h1 class="display-4"><i class="fas fa-gamepad me-2"></i>Explora nuestro catálogo de juegos</h1>
-    <p class="lead">Descubre los mejores títulos para todas las plataformas</p>
-</div>
+<!-- Segunda Navbar (Secundaria) - Estilo mejorado con reducción de ancho -->
+<nav class="navbar navbar-expand-lg" style="background-color: #B62DCE; border-radius: 25px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); height: 50px; padding: 5px 0; max-width: 650px; margin: 0 auto;">
+    <div class="container-fluid justify-content-center">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#">Pendiente</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#">Jugando</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#">Completados</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link text-white" href="#">Catálogo</a>
+            </li>
+        </ul>
+    </div>
+</nav>
 
 <!-- Filtros -->
 <div class="filter-section bg-dark rounded p-4 mb-4">
@@ -16,7 +31,7 @@
             <label class="form-label text-white">Filtrar por categoría:</label>
             <select name="categoria" class="form-select" onchange="this.form.submit()">
                 <option value="">Todas las categorías</option>
-                @foreach (var categoria in ViewBag.Categorias)
+                @foreach (var categoria in ViewBag.Categorias as List<string>)
                 {
                     <option value="@categoria" selected="@(ViewBag.CategoriaSeleccionada == categoria)">@categoria</option>
                 }
@@ -26,7 +41,7 @@
             <label class="form-label text-white">Filtrar por plataforma:</label>
             <select name="plataforma" class="form-select" onchange="this.form.submit()">
                 <option value="">Todas las plataformas</option>
-                @foreach (var plataforma in ViewBag.Plataformas)
+                @foreach (var plataforma in ViewBag.Plataformas as List<string>)
                 {
                     <option value="@plataforma" selected="@(ViewBag.PlataformaSeleccionada == plataforma)">@plataforma</option>
                 }
@@ -75,7 +90,15 @@
                             }
                             <span class="ms-1">@item.PuntuacionMedia?.ToString("0.0")</span>
                         </div>
-                        <a asp-action="Detalles" asp-route-id="@item.IdJuego" class="btn btn-primary w-100">Ver detalles</a>
+
+                        <!-- Botón "Ver detalles" -->
+                        <a asp-action="Detalles" asp-route-id="@item.IdJuego" class="btn btn-primary w-100 mb-2">Ver detalles</a>
+
+                        <!-- Botones en la misma línea para "Añadir a biblioteca" y "Comprar juego" -->
+                        <div class="d-flex justify-content-between">
+                            <a asp-action="AddToLibrary" asp-route-id="@item.IdJuego" class="btn btn-success w-48">Añadir a biblioteca</a>
+                            <a asp-action="Comprar" asp-route-id="@item.IdJuego" class="btn" style="background-color: #B62DCE; color: white; width: 48%;">Comprar juego</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -125,6 +148,11 @@ else
         .filter-section {
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
+        }
+
+        /* Estilos para los botones en la misma línea */
+        .d-flex .btn {
+            margin-right: 5px; /* Separación entre los botones */
         }
     </style>
 }

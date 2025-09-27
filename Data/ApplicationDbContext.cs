@@ -12,10 +12,11 @@ namespace Proyecto_Gaming.Data
         // DbSet para la tabla Juegos
         public DbSet<Juego> Juegos { get; set; }
 
-        // Si tienes otras tablas, agrégales aquí:
-        // public DbSet<Usuario> Usuarios { get; set; }
-        // public DbSet<Reseña> Reseñas { get; set; }
-        // etc...
+         // DbSet para Usuarios
+        public DbSet<Usuario> Usuarios { get; set; }
+
+        // DbSet para BibliotecaUsuario (para almacenar juegos en la biblioteca de cada usuario)
+        public DbSet<BibliotecaUsuario> BibliotecaUsuario { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
