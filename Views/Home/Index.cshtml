@@ -261,7 +261,50 @@
             text-decoration: underline;
         }
 
-        
+
+        }
+                /* Estilos adicionales para la funcionalidad de mostrar contraseña */
+        .toggle-password {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: var(--secondary);
+            transition: var(--transition);
+        }
+
+        .toggle-password:hover {
+            color: var(--primary);
+        }
+
+        /* Mejoras de responsividad */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 25px;
+            }
+            
+            .logo-text {
+                font-size: 2.2rem;
+            }
+        }
+
+        /* Animaciones adicionales */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+            20%, 40%, 60%, 80% { transform: translateX(5px); }
+        }
+
+        .shake {
+            animation: shake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
     </style>
 </head>
 <body>
@@ -279,6 +322,7 @@
                 <div class="feature-icon">
                     <i class="fas fa-gamepad"></i>
                 </div>
+
                 <h3>Lleva tu biblioteca gamer siempre contigo</h3>
                 <p>Organiza y accede a tu colección de juegos desde cualquier dispositivo, en cualquier momento.</p>
             </div>
@@ -286,6 +330,7 @@
             <div class="feature-card">
                 <div class="feature-icon">
                     <i class="fas fa-chart-bar"></i>
+
                 </div>
                 <h3>Consulta tus estadísticas de juego</h3>
                 <p>Analiza tu progreso, horas jugadas y logros desbloqueados con detalladas estadísticas.</p>
@@ -339,11 +384,12 @@
             console.log('Redirigiendo a página de registro...');
         });
         
+
         document.getElementById('login-btn').addEventListener('click', function(e) {
             e.preventDefault();
             // Aquí podrías redirigir a la página de login si la tienes
             alert('Redirigiendo a página de inicio de sesión...');
-        });
+
         
         document.getElementById('guest-btn').addEventListener('click', function(e) {
             e.preventDefault();
